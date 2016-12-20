@@ -11,6 +11,7 @@ import qualified Data.Text as T
 
 import           Model.Type
 import qualified Model.User as User
+import qualified Model.Session as Session
 import qualified View.Default as V
 import           Database.Persist (Entity(..))
 

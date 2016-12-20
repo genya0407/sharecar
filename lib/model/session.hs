@@ -5,6 +5,9 @@ import           Database.Persist
 import           Control.Monad.IO.Class
 import           Data.Time.Clock
 
+all :: MonadIO m => m [Entity Session]
+all = runDB $ selectList [] [] 
+
 create :: MonadIO m => UserId -> m SessionId
 create userid = do
   now <- liftIO $ getCurrentTime
