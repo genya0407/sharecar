@@ -25,6 +25,20 @@ root_ = layout $ do
   h1_ "トップページ"
   p_ "ここはトップページです"
 
+login_ :: Text
+login_ = layout $ do
+  h1_ "Login"
+  form_ [action_ "/login", method_ "POST"] $ do
+    label_  $ do
+      "Email: "
+      input_ [type_ "email", name_ "email"]
+    br_ []
+    label_  $ do
+      "Password: "
+      input_ [type_ "password", name_ "password"]
+    br_ []
+    input_ [type_ "submit", value_ "Login"]
+
 users_ :: [Entity User] -> Text
 users_ users = layout $ do
   forM_ users $ \(Entity userid user) -> do

@@ -39,6 +39,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
   User
     mail Text
     name Text
+    cryptPassword Text
     phoneNumber Text
     UniqueMail mail
     deriving Show Generic
@@ -62,6 +63,10 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
     meterEnd UTCTime
     updated UTCTime
     created UTCTime
+    deriving Show Generic
+  Session
+    validUntil UTCTime
+    userId UserId
     deriving Show Generic
 |]
 

@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import Web.Spock
+import Web.Spock hiding (SessionId)
 import Web.Spock.Config
 
 import Control.Monad.Trans
@@ -22,13 +22,22 @@ main =
        runSpock 8080 (spock spockCfg app)
 
 app :: SpockM () MySession MyAppState ()
-app =
-    do get root $
-           text "Hello World!"
-       get ("hello" <//> var) $ \name ->
-           do (DummyAppState ref) <- getState
-              visitorNumber <- liftIO $ atomicModifyIORef' ref $ \i -> (i+1, i+1)
-              text ("Hello " <> name <> ", you are visitor number " <> T.pack (show visitorNumber))
-       get "users" $ do
-         users <- liftIO $ User.all
-         html $ V.users_ users
+app = do
+  get root $ text "Hello World!"
+  get "users" $ do
+    users <- liftIO $ User.all
+    html $ V.users_ users
+  get "login" $ do
+    html $ V.login_
+  post "login" $ do
+    mEmail <- param "email" 
+    mPassword <- param "password"
+    case (mEmail, mPassword) of
+      (Just email, Just password) -> do
+        mSid <- User.login email password
+        case mSid of
+          Just sid -> do
+            writeSession (Just sid)
+            redirect "/users"
+          Nothing -> text "ログインに失敗しました。"
+      _ -> text "入力されていない項目があります。"
