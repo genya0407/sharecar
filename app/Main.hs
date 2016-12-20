@@ -9,7 +9,8 @@ import Data.Monoid
 import Data.IORef
 import qualified Data.Text as T
 
-import qualified Model as M
+import qualified Model.User as User
+import qualified View.Default as V
 
 data MySession = EmptySession
 data MyAppState = DummyAppState (IORef Int)
@@ -28,3 +29,6 @@ app =
            do (DummyAppState ref) <- getState
               visitorNumber <- liftIO $ atomicModifyIORef' ref $ \i -> (i+1, i+1)
               text ("Hello " <> name <> ", you are visitor number " <> T.pack (show visitorNumber))
+       get "users" $ do
+         users <- liftIO $ User.all
+         html $ V.users_ users
