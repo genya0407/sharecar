@@ -1,0 +1,47 @@
+name:                sharecar
+version:             0.1.0.0
+synopsis:            Initial project template from stack
+description:         Please see README.md
+homepage:            https://github.com/githubuser/sharecar#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Author name here
+maintainer:          example@example.com
+copyright:           2016 Author name here
+category:            Web
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+executable sharecar
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
+                     , sharecar
+                     , Spock >= 0.11
+                     , mtl
+                     , text
+                     , persistent
+
+library
+  hs-source-dirs:      lib
+  exposed-modules:     Model
+  build-depends:       base >= 4.7 && < 5
+                     , resourcet >= 1.1
+                     , monad-logger >= 0.3
+                     , transformers >= 0.5
+                     , monad-control >= 1.0
+                     , text >= 1.2
+                     , bytestring >= 0.10
+                     , time >= 1.6
+                     , servant >= 0.8
+                     , servant-server >= 0.8
+                     , servant-mock >= 0.8
+                     , persistent >= 2.6
+                     , persistent-template >= 2.5
+                     , persistent-sqlite >= 2.6
+                     , aeson >= 0.11
+                     , QuickCheck >= 2.8
+                     , quickcheck-text >= 0.1
+  default-language:    Haskell2010
