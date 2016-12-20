@@ -23,6 +23,7 @@ executable sharecar
                      , mtl
                      , text
                      , persistent
+                     , hvect
 
 executable migrate
   hs-source-dirs:      app
@@ -32,6 +33,16 @@ executable migrate
                      , sharecar
                      , persistent >= 2.6
                      , persistent-sqlite >= 2.6
+  default-language:    Haskell2010
+
+executable seed
+  hs-source-dirs:      app
+  main-is:             Seed.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , sharecar
+                     , random
+                     , time
   default-language:    Haskell2010
 
 library

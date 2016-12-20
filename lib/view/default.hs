@@ -10,6 +10,7 @@ import Database.Persist
 import Database.Persist.Sql
 import Control.Monad
 import Data.Monoid
+import Data.Time.Clock
 
 layout :: Html () -> Text
 layout content = toStrict . renderText $ do
@@ -46,3 +47,13 @@ users_ users = layout $ do
       li_ . toHtml $ userid
       li_ . toHtml $ userName user
       li_ . toHtml $ userPhoneNumber user
+
+reservations_ :: [Entity Reservation] -> Text
+reservations_ reservs = layout $ do
+  forM_ reservs $ \(Entity reservid reserv) -> do
+    ul_ $ do
+      li_ . toHtml $ reservid
+      li_ . toHtml $ reservationUserId reserv
+      li_ . toHtml $ reservationCarId reserv
+      li_ . toHtml $ reservationBegin reserv
+      li_ . toHtml $ reservationEnd reserv
