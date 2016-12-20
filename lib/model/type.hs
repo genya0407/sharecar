@@ -14,21 +14,19 @@
 module Model.Type where
 
 import           Data.Text (Text)
+import           Data.ByteString (ByteString)
 import           Data.Time.Clock (UTCTime(..))
 import           Database.Persist.TH
 import           Database.Persist
 import           Database.Persist.Sql
 import           Database.Persist.Sqlite
 import           GHC.Generics
-import           Data.Aeson
-import           Test.QuickCheck
-import           Data.Text.Arbitrary
 import           Control.Monad.IO.Class
 
-import Control.Monad.Trans.Control
-import Control.Monad.Trans.Reader
-import Control.Monad.Logger
-import Control.Monad.Trans.Resource.Internal
+import           Control.Monad.Trans.Control
+import           Control.Monad.Trans.Reader
+import           Control.Monad.Logger
+import           Control.Monad.Trans.Resource.Internal
 
 import           Blaze.ByteString.Builder (Builder)
 import qualified Blaze.ByteString.Builder as Blaze
@@ -39,7 +37,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
   User
     mail Text
     name Text
-    cryptPassword Text
+    cryptPassword ByteString
     phoneNumber Text
     UniqueMail mail
     deriving Show Generic
@@ -69,16 +67,6 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
     userId UserId
     deriving Show Generic
 |]
-
-instance FromJSON User
-instance FromJSON Car
-instance FromJSON Reservation
-instance FromJSON Occupation
-
-instance ToJSON User
-instance ToJSON Car
-instance ToJSON Reservation
-instance ToJSON Occupation
 
 build :: Monad m => Builder -> HtmlT m ()
 build b = HtmlT (return (const b,()))

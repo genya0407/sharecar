@@ -56,4 +56,5 @@ library
                      , quickcheck-text >= 0.1
                      , lucid >= 2.9
                      , blaze-builder >= 0.4
+                     , cryptohash
   default-language:    Haskell2010

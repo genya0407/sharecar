@@ -6,10 +6,35 @@ import           Database.Persist
 import           Control.Monad.IO.Class
 import           Data.Either
 import           Data.Text
+import           Data.ByteString
 import qualified Model.Session as Session
+import           Crypto.Hash.SHA1 (hash)
 
 all :: MonadIO m => m [Entity User]
 all = runDB $ selectList [] []
+
+type Name = Text
+type Email = Text
+type PhoneNumber = Text
+type Password = ByteString
+
+create :: MonadIO m => Email -> Name -> PhoneNumber -> Password -> m (Key User)
+create email name phoneNumber password = do
+  let
+    cryptPassword = hash password
+    user = User
+      { userMail = email
+      , userName = name
+      , userPhoneNumber = phoneNumber
+      , userCryptPassword = cryptPassword
+      }
+  runDB $ insert user
+
+getBySid :: MonadIO m => SessionId -> m (Maybe (Entity User))
+getBySid sid = do
+  Just (Entity _ session) <- Session.find sid
+  Just user <- runDB $ get (sessionUserId session)
+  return . Just $ Entity (sessionUserId session) user
 
 login :: MonadIO m => Text -> Text -> m (Maybe SessionId)
 login email password = do

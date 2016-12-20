@@ -9,24 +9,32 @@ import Data.Monoid
 import Data.IORef
 import qualified Data.Text as T
 
+import           Model.Type
 import qualified Model.User as User
 import qualified View.Default as V
+import           Database.Persist (Entity(..))
 
-data MySession = EmptySession
+type SessionVal = Maybe SessionId
 data MyAppState = DummyAppState (IORef Int)
 
 main :: IO ()
 main =
     do ref <- newIORef 0
-       spockCfg <- defaultSpockCfg EmptySession PCNoDatabase (DummyAppState ref)
+       spockCfg <- defaultSpockCfg Nothing PCNoDatabase (DummyAppState ref)
        runSpock 8080 (spock spockCfg app)
 
-app :: SpockM () MySession MyAppState ()
+app :: SpockM () SessionVal MyAppState ()
 app = do
   get root $ text "Hello World!"
   get "users" $ do
-    users <- liftIO $ User.all
-    html $ V.users_ users
+    mSid <- readSession
+    case mSid of
+      Just sid -> do
+        users <- liftIO $ User.all
+        -- html $ V.users_ users
+        Just (Entity userid user) <- User.getBySid sid
+        text $ userName user
+      Nothing -> text "ログインしてください"
   get "login" $ do
     html $ V.login_
   post "login" $ do
