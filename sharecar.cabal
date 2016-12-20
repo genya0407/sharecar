@@ -36,7 +36,7 @@ executable migrate
 
 library
   hs-source-dirs:      lib
-  exposed-modules:     Model.Type, Model.User, View.Default
+  exposed-modules:     Model.Type, Model.User, Model.Car, Model.Reservation, Model.Occupation View.Default
   build-depends:       base >= 4.7 && < 5
                      , resourcet >= 1.1
                      , monad-logger >= 0.3
