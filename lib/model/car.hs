@@ -21,3 +21,9 @@ allWithOccupied = do
     isOccupied <- Occup.isOccupied carid
     return (Entity carid car, isOccupied)
   return carsWithOccupied
+
+withOccupied :: MonadIO m => CarId -> m (Maybe (Entity Car, Bool))
+withOccupied carid = do
+  Just car <- runDB $ get carid
+  isOccupied <- Occup.isOccupied carid
+  return $ Just (Entity carid car, isOccupied)

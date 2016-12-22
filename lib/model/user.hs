@@ -6,6 +6,7 @@ import           Database.Persist
 import           Control.Monad.IO.Class
 import           Data.Either
 import           Data.Text
+import           Data.Text.Encoding (encodeUtf8)
 import           Data.ByteString
 import qualified Model.Session as Session
 import           Crypto.Hash.SHA1 (hash)
@@ -41,6 +42,9 @@ login email password = do
       mUser <- runDB $ selectList [UserMail ==. email] [LimitTo 1]
       case mUser of
         [Entity userid user] -> do
-          sid <- Session.create userid
-          return $ Just sid
+          if userCryptPassword user == (hash . encodeUtf8) password then do
+            sid <- Session.create userid
+            return $ Just sid
+          else
+            return Nothing
         _ -> return Nothing

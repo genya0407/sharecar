@@ -24,6 +24,7 @@ executable sharecar
                      , text
                      , persistent
                      , hvect
+                     , time
 
 executable migrate
   hs-source-dirs:      app

@@ -58,8 +58,8 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
     carId CarId
     begin UTCTime
     end UTCTime
-    meterBegin UTCTime
-    meterEnd UTCTime
+    meterBegin Int
+    meterEnd Int Maybe
     updated UTCTime
     created UTCTime
     deriving Show Generic
