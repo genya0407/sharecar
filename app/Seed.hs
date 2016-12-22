@@ -7,9 +7,9 @@ import qualified Model.Reservation as Reserv
 import qualified Model.Occupation as Occup
 
 import           Data.Time.Clock
-import           Data.Time.LocalTime
 import           System.Random (randomRIO)
 import           Control.Monad
+import           Utils
 
 main = do
   user1 <- User.create "example1@example.com" "Yamada Taro" "0123456789" "password1"
@@ -21,7 +21,7 @@ main = do
   car3 <- Car.create "ライフ"
   car4 <- Car.create "オデッセイ"
 
-  now <- return . zonedTimeToUTC =<< getZonedTime
+  now <- getCurrentTime'
   forM_ [(user1, car2), (user3 ,car4), (user2, car1)] $ \(user, car) -> do
     startPoint <- randomRIO (0, 24 * 60 * 60 * 14)
     reserveLength <- randomRIO (60 * 60 * 3, 24 * 60 * 60 * 14)

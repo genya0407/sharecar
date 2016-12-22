@@ -11,7 +11,6 @@ import Database.Persist.Sql (fromSqlKey, toSqlKey)
 import Control.Monad
 import Data.Monoid
 import Data.Time.Clock
-import Data.Time.LocalTime
 import Data.Time.Format
 import Data.Maybe
 
@@ -55,7 +54,7 @@ carDetail_ me (carEntity@(Entity carid car), isOccupied) = layout (Just me) $ do
     li_ "ガス代"
     li_ "使用履歴"
 
-inputBeginEnd_ :: Maybe ZonedTime -> Maybe ZonedTime -> Html ()
+inputBeginEnd_ :: Maybe UTCTime -> Maybe UTCTime -> Html ()
 inputBeginEnd_ mBegin mEnd = do
   let
     beginDate = pack $ fromMaybe "" $ formatTime defaultTimeLocale "%F" <$> mBegin
@@ -75,7 +74,7 @@ inputMeterBegin_ mMeterBegin = do
   label_ [for_ "meter-begin"] "乗車時メーター"
   input_ [type_ "number", name_ "meter-begin", value_ meterBegin']
 
-carOccupyNew_ :: Me -> (Entity Car, Bool) -> Maybe ZonedTime -> Maybe Int -> Text
+carOccupyNew_ :: Me -> (Entity Car, Bool) -> Maybe UTCTime -> Maybe Int -> Text
 carOccupyNew_ me (carEntity@(Entity carid car), isOccupied) mNow mMeterBegin = layout (Just me) $ do
   form_ [action_ (carOccupyNewUrl carid), method_ "POST", acceptCharset_ "UTF-8"] $ do
     carViewWithOccupied_ carEntity isOccupied

@@ -12,7 +12,6 @@ import Control.Monad
 import Data.Monoid
 import Data.IORef
 import Data.Time.Clock
-import Data.Time.LocalTime
 import Data.Time.Format
 import qualified Data.Text as T
 
@@ -30,6 +29,7 @@ import           Data.List (intersperse)
 import           Data.HVect
 
 import qualified Route.Login as RL
+import Utils
 
 type SessionVal = Maybe SessionId
 data MyAppState = DummyAppState (IORef Int)
@@ -81,8 +81,7 @@ app = do
         mCarWithOccupied <- Car.withOccupied carid
         case mCarWithOccupied of
           Just carWithOccupied@(Entity carid car, isOccupied) -> do
-            -- now <- liftIO getCurrentTime
-            now <- liftIO getZonedTime
+            now <- liftIO getCurrentTime'
             mLastOccup <- Occup.lastByMeter carid
             html $ V.carOccupyNew_ me carWithOccupied (Just now) (occupationMeterEnd =<< (\(Entity occupid occup) -> Just occup) =<< mLastOccup)
           Nothing -> redirect "/car"
