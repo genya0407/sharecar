@@ -21,7 +21,8 @@ import qualified Model.Session as Session
 import qualified Model.Reservation as Reserv
 import qualified Model.Occupation as Occup
 import qualified Model.Car as Car
-import qualified View.Default as V
+import qualified View as V
+import qualified Form as F
 import           Database.Persist (Entity(..))
 import           Database.Persist.Sql (toSqlKey)
 import           Data.List (intersperse)
@@ -62,6 +63,7 @@ develHook = do
 app :: SpockCtxM () () SessionVal MyAppState ()
 app = do
   prehook (return HNil) $ do
+    get "/" $ redirect "/car"
     RL.loginRoute "/car"
     prehook develHook $ do -- Caution !!!
       get "car" $ do
@@ -88,32 +90,10 @@ app = do
       post ("car" <//> var <//> "occupy/new") $ \_carid -> do
         let carid = toSqlKey _carid
         (meElement@(Entity meid me) :: Entity User) <- liftM findFirst getContext
-        mOccup <- formOccupationBegin meid carid
+        mOccup <- F.formOccupationBegin meid carid
         case mOccup of
           Just occup -> do
             Occup.save occup
             redirect "/car"
           Nothing -> do
             redirect "/car"
-
-formOccupationBegin :: MonadIO m => UserId -> CarId -> ActionCtxT ctx m (Maybe Occupation)
-formOccupationBegin userid carid = do
-  mBeginDate <- param "begin-date"
-  mBeginTime <- param "begin-time"
-  mEndDate <- param "end-date"
-  mEndTime <- param "end-time"
-  let
-    mBegin = parseTimeM True defaultTimeLocale "%F/%R" =<< ((\d t -> d ++ "/" ++ t) <$> mBeginDate <*> mBeginTime)
-    mEnd = parseTimeM True defaultTimeLocale "%F/%R" =<< ((\d t -> d ++ "/" ++ t) <$> mEndDate <*> mEndTime)
-  mMeterBegin <- param "meter-begin"
-  let mOccupIO = Occup.new <$> Just userid
-                           <*> Just carid
-                           <*> mBegin
-                           <*> mEnd
-                           <*> mMeterBegin
-                           <*> Just Nothing -- mMeterEndはnewのときは必ずNothing
-  case mOccupIO of
-    Just occupIO -> do
-      occup <- occupIO
-      return $ Just occup
-    Nothing -> return Nothing

@@ -3,7 +3,7 @@
 module Route.Login where
 
 import           Web.Spock hiding (SessionId)
-import qualified View.Default as V
+import qualified View as V
 import qualified Model.User as User
 
 loginRoute redirectAfterAuth = do

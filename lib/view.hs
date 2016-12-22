@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module View.Default where
+module View where
 
 import Lucid
 import Data.Text.Lazy (toStrict)
@@ -13,8 +13,6 @@ import Data.Monoid
 import Data.Time.Clock
 import Data.Time.Format
 import Data.Maybe
-
-import System.IO.Unsafe (unsafePerformIO)
 
 type Me = Entity User
 
