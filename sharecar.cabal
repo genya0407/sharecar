@@ -47,7 +47,7 @@ executable seed
 
 library
   hs-source-dirs:      lib
-  exposed-modules:     Model.Type, Model.User, Model.Session, Model.Car, Model.Reservation, Model.Occupation View.Default
+  exposed-modules:     Model.Type, Model.User, Model.Session, Model.Car, Model.Reservation, Model.Occupation, View.Default, Route.Login
   build-depends:       base >= 4.7 && < 5
                      , resourcet >= 1.1
                      , monad-logger >= 0.3
@@ -68,4 +68,5 @@ library
                      , lucid >= 2.9
                      , blaze-builder >= 0.4
                      , cryptohash
+                     , Spock
   default-language:    Haskell2010

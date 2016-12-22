@@ -22,6 +22,8 @@ import           Database.Persist (Entity(..))
 
 import           Data.HVect
 
+import qualified Route.Login as RL
+
 type SessionVal = Maybe SessionId
 data MyAppState = DummyAppState (IORef Int)
 
@@ -30,9 +32,6 @@ main =
     do ref <- newIORef 0
        spockCfg <- defaultSpockCfg Nothing PCNoDatabase (DummyAppState ref)
        runSpock 8080 (spock spockCfg app)
-
---initHook :: MonadIO m => ActionCtxT () m (HVect '[])
-initHook = return HNil
 
 --authHook :: ActionCtxT (HVect xs) m (HVect ((Entity User) ': xs))
 authHook = do
@@ -48,21 +47,8 @@ authHook = do
 
 app :: SpockCtxM () () SessionVal MyAppState ()
 app = do
-  prehook initHook $ do
-    get "login" $ do
-      html $ V.login_
-    post "login" $ do
-      mEmail <- param "email" 
-      mPassword <- param "password"
-      case (mEmail, mPassword) of
-        (Just email, Just password) -> do
-          mSid <- User.login email password
-          case mSid of
-            Just sid -> do
-              writeSession (Just sid)
-              redirect "/users"
-            Nothing -> text "login failed."
-        _ -> text "login failed."
+  prehook (return HNil) $ do
+    RL.loginRoute "/users"
     prehook authHook $ do
       get root $ text "Hello World!"
       get "users" $ do
