@@ -17,6 +17,8 @@ import           Model.Type
 import qualified Model.User as User
 import qualified Model.Session as Session
 import qualified Model.Reservation as Reserv
+import qualified Model.Occupation as Occup
+import qualified Model.Car as Car
 import qualified View.Default as V
 import           Database.Persist (Entity(..))
 
@@ -41,21 +43,15 @@ authHook = do
     Just sid -> do
       mUser <- User.getBySid sid
       case mUser of
-        Nothing -> text "Sorry, no access!"
+        Nothing -> redirect "/login"
         Just user -> return (user :&: oldCtx)
-    _ -> text "Do login!"
+    _ -> redirect "/login"
 
 app :: SpockCtxM () () SessionVal MyAppState ()
 app = do
   prehook (return HNil) $ do
-    RL.loginRoute "/users"
+    RL.loginRoute "/"
     prehook authHook $ do
-      get root $ text "Hello World!"
-      get "users" $ do
-        -- (me :: Entity User) <- liftM findFirst getContext
-        users <- User.all
-        html $ V.users_ users
-      get "reservations" $ do
-        reservs <- Reserv.active
-        html $ V.reservations_ reservs
-
+      get root $ do
+        carsWithOccupied <- Car.allWithOccupied
+        html $ V.root_ carsWithOccupied

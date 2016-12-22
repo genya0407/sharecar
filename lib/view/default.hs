@@ -21,10 +21,21 @@ layout content = toStrict . renderText $ do
       meta_ [name_ "viewport", content_ "width=device-width, initial-scale=1"]
     body_ content
 
-root_ :: Text
-root_ = layout $ do
-  h1_ "トップページ"
-  p_ "ここはトップページです"
+root_ :: [(Entity Car, Bool)] -> Text
+root_ carsWithOccupied = layout $ do
+  ul_ $ do
+    forM_ carsWithOccupied $ \(car, isOccupied) -> do
+      li_ $ do
+        carViewWithOccupied_ car isOccupied
+
+carViewWithOccupied_ :: Entity Car -> Bool -> Html ()
+carViewWithOccupied_ (Entity carid car) isOccupied = do
+  div_ $ do
+    span_ . toHtml $ carName car
+    span_ $ if isOccupied then
+              "使用中"
+            else
+              "使用可"
 
 login_ :: Text
 login_ = layout $ do
