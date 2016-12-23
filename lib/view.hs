@@ -22,6 +22,9 @@ carDetailUrl carid = "/car/" <> (pack . show . fromSqlKey $ carid)
 carOccupyNewUrl :: CarId -> Text
 carOccupyNewUrl carid = (carDetailUrl carid) <> "/occupy/new"
 
+occupationEditUrl :: OccupationId -> Text
+occupationEditUrl occupid = "/occupation/" <> ( pack . show . fromSqlKey $ occupid) <> "/edit"
+
 layout :: Maybe Me -> Html () -> Text
 layout mMe content = toStrict . renderText $ do
   doctype_
@@ -36,8 +39,21 @@ layout mMe content = toStrict . renderText $ do
           Nothing -> ""
       content
 
-carIndex_ :: Me -> [(Entity Car, Bool)] -> Text
-carIndex_ me carsWithOccupied = layout (Just me) $ do
+occupationEdit :: Me -> (Entity Car, Bool) -> Entity Occupation -> Text
+occupationEdit me (carEntity@(Entity carid car), isOccupied) (Entity occupid occup) = layout (Just me) $ do
+  "時刻" >> (toHtml $ occupationBegin occup) >> "〜" >> (toHtml $ occupationEnd occup)
+  br_ []
+  "メーター" >> (toHtml . show $ occupationMeterBegin occup) >> "〜"
+  form_ [action_ (occupationEditUrl occupid), method_ "POST", acceptCharset_ "UTF-8"] $ do
+    input_ [type_ "number", name_ "meter-end"]
+    input_ [type_ "submit", value_ "送信"]
+
+carIndex_ :: Me -> [(Entity Car, Bool)] -> [Entity Occupation] -> Text
+carIndex_ me carsWithOccupied occupsNotMeterEndByMe = layout (Just me) $ do
+  ul_ $ do
+    forM_ occupsNotMeterEndByMe $ \occupsEntity@(Entity occupid occup) -> do
+      li_ $ a_ [href_ (occupationEditUrl occupid)] $ toHtml $ (utctDay . occupationBegin $ occup)
+  hr_ []
   ul_ $ do
     forM_ carsWithOccupied $ \(carEntity@(Entity carid car), isOccupied) -> do
       li_ $ do

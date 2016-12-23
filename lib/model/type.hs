@@ -17,6 +17,7 @@ import           Data.Text (Text)
 import           Data.ByteString (ByteString)
 import           Data.Time.Clock (UTCTime(..))
 import           Data.Time.Format
+import           Data.Time.Calendar
 import           Database.Persist.TH
 import           Database.Persist
 import           Database.Persist.Sql
@@ -77,8 +78,12 @@ instance (ToBackendKey SqlBackend record) => ToHtml (Key record) where
   toHtmlRaw = build . Blaze.fromString . show . fromSqlKey
 
 instance ToHtml UTCTime where
-  toHtml    = build . Blaze.fromString . (formatTime defaultTimeLocale "%Y-%m-%d %H:%M")
-  toHtmlRaw = build . Blaze.fromString . (formatTime defaultTimeLocale "%Y-%m-%d %H:%M")
+  toHtml    = build . Blaze.fromString . (formatTime defaultTimeLocale "%Y年%m月%d日 %H時%M分")
+  toHtmlRaw = toHtml
+
+instance ToHtml Day where
+  toHtml    = build . Blaze.fromString . (formatTime defaultTimeLocale "%Y年%m月%d日")
+  toHtmlRaw = toHtml
 
 _runDB :: (MonadBaseControl IO m, MonadIO m) => ReaderT SqlBackend (NoLoggingT (ResourceT m)) a -> m a
 _runDB query = runSqlite "db/db.sqlite3" query

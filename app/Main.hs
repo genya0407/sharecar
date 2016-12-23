@@ -53,23 +53,25 @@ authHook = do
         Just user -> return (user :&: oldCtx)
     _ -> redirect "/login"
 
+{-
 develHook = do
   oldCtx <- getContext
-  --mSid <- readSession
   users <- User.all
   let user = (users Prelude.!! 0)
   return (user :&: oldCtx)
+-}
 
 app :: SpockCtxM () () SessionVal MyAppState ()
 app = do
   prehook (return HNil) $ do
     get "/" $ redirect "/car"
     RL.loginRoute "/car"
-    prehook develHook $ do -- Caution !!!
+    prehook authHook $ do -- Caution !!!
       get "car" $ do
-        me <- liftM findFirst getContext
+        me@(Entity meid _) <- liftM findFirst getContext
         carsWithOccupied <- Car.allWithOccupied
-        html $ V.carIndex_ me carsWithOccupied
+        occupsNotMeterEndByMe <- Occup.notMeterEndBy meid
+        html $ V.carIndex_ me carsWithOccupied occupsNotMeterEndByMe
       get ("car" <//> var) $ \_carid -> do
         let carid = toSqlKey _carid
         me <- liftM findFirst getContext
@@ -89,7 +91,7 @@ app = do
           Nothing -> redirect "/car"
       post ("car" <//> var <//> "occupy/new") $ \_carid -> do
         let carid = toSqlKey _carid
-        (meElement@(Entity meid me) :: Entity User) <- liftM findFirst getContext
+        Entity meid me <- liftM findFirst getContext
         mOccup <- F.formOccupationBegin meid carid
         case mOccup of
           Just occup -> do
@@ -97,3 +99,33 @@ app = do
             redirect "/car"
           Nothing -> do
             redirect "/car"
+      get ("occupation" <//> var <//> "edit") $ \_occupid -> do
+        let occupid = toSqlKey _occupid
+        (meEntity@(Entity meid me) :: Entity User) <- liftM findFirst getContext
+        mOccup <- Occup.find occupid
+        case mOccup of
+          Just occup -> do
+            if occupationUserId occup == meid then do
+              mWithOccupied <- Car.withOccupied $ occupationCarId occup
+              case mWithOccupied of
+                Just withOccupied -> html $ V.occupationEdit meEntity withOccupied (Entity occupid occup)
+                Nothing -> redirect "/car"
+            else
+              redirect "/car"
+          Nothing -> redirect "/car"
+      post ("occupation" <//> var <//> "edit") $ \_occupid -> do
+        let occupid = toSqlKey _occupid
+        (meEntity@(Entity meid me) :: Entity User) <- liftM findFirst getContext
+        mOccup <- Occup.find occupid
+        case mOccup of
+          Just occup -> do
+            if occupationUserId occup == meid then do
+              mMeterEnd <- param "meter-end"
+              case mMeterEnd of
+                Just meterEnd -> do
+                  Occup.replace occupid $ occup { occupationMeterEnd = Just meterEnd }
+                  redirect "/car"
+                Nothing -> redirect "/car"
+            else
+              redirect "/car"
+          Nothing -> redirect "/car"

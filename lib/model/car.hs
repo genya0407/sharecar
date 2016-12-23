@@ -7,6 +7,7 @@ import           Database.Persist
 import           Control.Monad
 import           Control.Monad.IO.Class
 import           Data.Text hiding (all)
+import           Utils
 
 all :: MonadIO m => m [Entity Car]
 all = runDB $ selectList [] []
@@ -27,3 +28,13 @@ withOccupied carid = do
   Just car <- runDB $ get carid
   isOccupied <- Occup.isOccupied carid
   return $ Just (Entity carid car, isOccupied)
+
+{-
+notMeterEndBy :: MonadIO m => UserId -> m [(Entity Car, Bool)]
+notMeterEndBy userid = do
+  occupsNotMeterEndByMe <- Occup.notMeterEndBy userid
+  now <- liftIO getCurrentTime'
+  forM occupsNotMeterEndByMe $ \(Entity occupid occup) -> do
+    Just car <- runDB $ selectFirst [CarId ==. (occupationCarId occup)] []
+    return (car, (occupationEnd occup) > now)
+-}
