@@ -11,8 +11,8 @@ import           Template
 
 mkActiveRecord "User"
 
-all :: MonadIO m => m [Entity Reservation]
-all = runDB $ selectList [] []
+-- all :: MonadIO m => m [Entity Reservation]
+-- all = runDB $ selectList [] []
 
 active :: MonadIO m => m [Entity Reservation]
 active = do
