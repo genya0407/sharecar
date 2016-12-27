@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TemplateHaskell #-}
 module Model.User where
 
 import           Model.Type
@@ -10,17 +11,17 @@ import           Data.Text.Encoding (encodeUtf8)
 import           Data.ByteString
 import qualified Model.Session as Session
 import           Crypto.Hash.SHA1 (hash)
+import           Template
 
-all :: MonadIO m => m [Entity User]
-all = runDB $ selectList [] []
+mkBoilerplate "User"
 
 type Name = Text
 type Email = Text
 type PhoneNumber = Text
 type Password = ByteString
 
-create :: MonadIO m => Email -> Name -> PhoneNumber -> Password -> m (Key User)
-create email name phoneNumber password = do
+createCrypt :: MonadIO m => Email -> Name -> PhoneNumber -> Password -> m (Key User)
+createCrypt email name phoneNumber password = do
   let
     cryptPassword = hash password
     user = User
@@ -29,7 +30,7 @@ create email name phoneNumber password = do
       , userPhoneNumber = phoneNumber
       , userCryptPassword = cryptPassword
       }
-  runDB $ insert user
+  create $ user
 
 getBySid :: MonadIO m => SessionId -> m (Maybe (Entity User))
 getBySid sid = do

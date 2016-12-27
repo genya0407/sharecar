@@ -12,10 +12,13 @@ import Control.Monad
 
 monadIO m = forallT [PlainTV m] $ sequenceQ [appT (conT ''Control.Monad.IO.Class.MonadIO) (varT m)]
 
-mkActiveRecord name = do
+runDBTemplate = infixE (Just (varE 'runDB)) (varE (mkName "$")) 
+
+mkBoilerplate name = do
   fetchAll <- mkFetchAll name
   find <- mkFind name
-  return . concat $ [fetchAll, find]
+  create <- mkCreate name
+  return . concat $ [fetchAll, find, create]
 
 mkFetchAll name = do
   fetchall <- newName "all"
@@ -28,10 +31,23 @@ mkFetchAll name = do
 mkFind name = do
   find <- newName "find"
   key <- newName "key"
-  let
-    targetType = mkName name
-    targetIdType = mkName (name ++ "Id")
   m <- newName "m"
-  fd <- funD find [clause [varP key] (normalB (infixE (Just (varE 'runDB)) (varE (mkName "$")) (Just (appE (varE 'get) (varE key))))) []]
-  td <- sigD find ((monadIO m) (appT (appT arrowT (conT targetIdType)) (appT (varT m) (appT (conT ''Maybe) (conT targetType)))))
+  let
+    targetType = conT $ mkName name
+    targetIdType = appT (conT ''Key) targetType
+  fd <- funD find [clause [varP key] (normalB $ runDBTemplate (Just (appE (varE 'get) (varE key)))) []]
+  td <- sigD find ((monadIO m) (appT (appT arrowT targetIdType) (appT (varT m) (appT (conT ''Maybe) targetType))))
   return [fd, td]
+
+mkCreate name = do
+  create <- newName "create"
+  m <- newName "m"
+  target <- newName "target"
+  let
+    targetType = conT $ mkName name
+    targetIdType = appT (conT ''Key) targetType
+  fd <- funD create [clause [varP target] (normalB $ runDBTemplate (Just (appE (varE 'insert) (varE target)))) []]
+  td <- sigD create ((monadIO m) (appT (appT arrowT targetType) (appT (varT m) targetIdType)))
+  return [fd, td]
+
+

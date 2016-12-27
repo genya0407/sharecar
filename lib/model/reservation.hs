@@ -9,10 +9,7 @@ import           Utils
 import           Language.Haskell.TH
 import           Template
 
-mkActiveRecord "User"
-
--- all :: MonadIO m => m [Entity Reservation]
--- all = runDB $ selectList [] []
+mkBoilerplate "Reservation"
 
 active :: MonadIO m => m [Entity Reservation]
 active = do
@@ -22,7 +19,7 @@ active = do
 type Begin = UTCTime
 type End = UTCTime
 
-create :: MonadIO m => UserId -> CarId -> Begin -> End -> m (Key Reservation)
-create userid carid begin end = do
+createTs :: MonadIO m => UserId -> CarId -> Begin -> End -> m (Key Reservation)
+createTs userid carid begin end = do
   now <- liftIO getCurrentTime'
-  runDB . insert $ Reservation userid carid begin end now now
+  create $ Reservation userid carid begin end now now

@@ -95,7 +95,7 @@ app = do
         mOccup <- F.formOccupationBegin meid carid
         case mOccup of
           Just occup -> do
-            Occup.save occup
+            Occup.create occup
             redirect "/car"
           Nothing -> do
             redirect "/car"
