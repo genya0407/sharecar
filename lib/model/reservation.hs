@@ -1,3 +1,4 @@
+{-# LANGUAGE TemplateHaskell #-}
 module Model.Reservation where
 
 import           Model.Type
@@ -5,6 +6,10 @@ import           Database.Persist
 import           Control.Monad.IO.Class
 import           Data.Time.Clock
 import           Utils
+import           Language.Haskell.TH
+import           Template
+
+mkActiveRecord "User"
 
 all :: MonadIO m => m [Entity Reservation]
 all = runDB $ selectList [] []

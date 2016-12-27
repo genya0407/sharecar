@@ -1,0 +1,2 @@
+:set -XTemplateHaskell
+import Language.Haskell.TH
