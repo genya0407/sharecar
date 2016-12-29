@@ -41,6 +41,7 @@ layout mMe content = toStrict . renderText $ do
 
 occupationEdit :: Me -> (Entity Car, Bool) -> Entity Occupation -> Text
 occupationEdit me (carEntity@(Entity carid car), isOccupied) (Entity occupid occup) = layout (Just me) $ do
+  carViewWithOccupied_ carEntity isOccupied
   "時刻" >> (toHtml $ occupationBegin occup) >> "〜" >> (toHtml $ occupationEnd occup)
   br_ []
   "メーター" >> (toHtml . show $ occupationMeterBegin occup) >> "〜"
