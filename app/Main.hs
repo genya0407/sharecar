@@ -98,7 +98,7 @@ app = do
             Occup.create occup
             redirect "/car"
           Nothing -> do
-            redirect "/car"
+            redirect . T.pack $ "/car/" ++ show _carid ++ "/occupy/new"
       get ("occupation" <//> var <//> "edit") $ \_occupid -> do
         let occupid = toSqlKey _occupid
         (meEntity@(Entity meid me) :: Entity User) <- liftM findFirst getContext
