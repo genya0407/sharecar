@@ -55,6 +55,7 @@ mkCreate name = do
 
 mkUpdate name = do
   update <- newName "update"
+  targetid <- newName "targetid"
   target <- newName "target"
   now <- newName "now"
   m <- newName "m"
@@ -62,6 +63,6 @@ mkUpdate name = do
     upd = mkName $ (map toLower name) ++ "Updated"
     targetType = conT $ mkName name
     targetTypeId = conT . mkName $ name ++ "Id"
-  fd <- funD update [clause [varP target] (normalB (infixE (Just (varE 'getCurrentTime')) (varE $ mkName ">>=") (Just (lamE [varP now] (appE (varE 'runDB) (infixE (Just (varE 'insert)) (varE $ mkName "$") (Just (recUpdE (varE target) [return (upd,VarE now)])))))))) []]
-  td <- sigD update ((monadIO m) (appT (appT arrowT targetType) (appT (varT m) targetTypeId)))
+  fd <- funD update [clause [varP targetid, varP target] (normalB (infixE (Just (varE 'getCurrentTime')) (varE $ mkName ">>=") (Just (lamE [varP now] (appE (varE 'runDB) (infixE (Just (appE (varE 'repsert) (varE targetid))) (varE $ mkName "$") (Just (recUpdE (varE target) [return (upd,VarE now)])))))))) []]
+  td <- sigD update ((monadIO m) (appT (appT arrowT targetTypeId) (appT (appT arrowT targetType) (appT (varT m) (tupleT 0)))))
   return [fd, td]
