@@ -32,10 +32,9 @@ import           Data.List (intersperse)
 import           Data.HVect
 
 import qualified Route.Login as RL
+import qualified Route.Occupation as RO
 import Utils
 
-type SessionVal = Maybe SessionId
-data MyAppState = DummyAppState (IORef Int)
 type AuthHook = ActionCtxT (HVect '[]) (WebStateM () (Maybe SessionId) MyAppState) (HVect ((Entity User) ': '[]))
 
 main :: IO ()
@@ -73,6 +72,7 @@ app ah = do
     get "/" $ redirect "/car"
     RL.loginRoute "/car"
     prehook ah $ do
+      RO.occupationRoute
       get "car" $ do
         me@(Entity meid _) <- liftM findFirst getContext
         carsWithOccupied <- Car.allWithOccupied
@@ -87,54 +87,4 @@ app ah = do
         mCarWithOccupied <- Car.withOccupied carid
         case mCarWithOccupied of
           Just carWithOccupied -> html $ V.carDetail_ me carWithOccupied
-          Nothing -> redirect "/car"
-      get ("car" <//> var <//> "occupy/new") $ \_carid -> do
-        let carid = toSqlKey _carid
-        (me :: Entity User) <- liftM findFirst getContext
-        mCarWithOccupied <- Car.withOccupied carid
-        case mCarWithOccupied of
-          Just carWithOccupied@(Entity carid car, isOccupied) -> do
-            now <- liftIO getCurrentTime'
-            mLastOccup <- Occup.lastByMeter carid
-            html $ V.carOccupyNew_ me carWithOccupied (Just now) (occupationMeterEnd =<< (\(Entity occupid occup) -> Just occup) =<< mLastOccup)
-          Nothing -> redirect "/car"
-      post ("car" <//> var <//> "occupy/new") $ \_carid -> do
-        let carid = toSqlKey _carid
-        Entity meid me <- liftM findFirst getContext
-        mOccup <- F.formOccupationBegin meid carid
-        case mOccup of
-          Just occup -> do
-            Occup.create occup
-            redirect "/car"
-          Nothing -> do
-            redirect . T.pack $ "/car/" ++ show _carid ++ "/occupy/new"
-      get ("occupation" <//> var <//> "edit") $ \_occupid -> do
-        let occupid = toSqlKey _occupid
-        (meEntity@(Entity meid me) :: Entity User) <- liftM findFirst getContext
-        mOccup <- Occup.find occupid
-        case mOccup of
-          Just occup -> do
-            if occupationUserId occup == meid then do
-              mWithOccupied <- Car.withOccupied $ occupationCarId occup
-              case mWithOccupied of
-                Just withOccupied -> html $ V.occupationEdit meEntity withOccupied (Entity occupid occup)
-                Nothing -> redirect "/car"
-            else
-              redirect "/car"
-          Nothing -> redirect "/car"
-      post ("occupation" <//> var <//> "edit") $ \_occupid -> do
-        let occupid = toSqlKey _occupid
-        (meEntity@(Entity meid me) :: Entity User) <- liftM findFirst getContext
-        mOccup <- Occup.find occupid
-        case mOccup of
-          Just occup -> do
-            if occupationUserId occup == meid then do
-              mMeterEnd <- param "meter-end"
-              case mMeterEnd of
-                Just meterEnd -> do
-                  Occup.replace occupid $ occup { occupationMeterEnd = Just meterEnd }
-                  redirect "/car"
-                Nothing -> redirect "/car"
-            else
-              redirect "/car"
           Nothing -> redirect "/car"
