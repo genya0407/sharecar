@@ -2,6 +2,9 @@
 module Model.Reservation where
 
 import           Database.Persist
+
+import qualified Model.User as User
+
 import           Template
 import           Utils
 
@@ -17,7 +20,11 @@ active = do
 type Begin = UTCTime
 type End = UTCTime
 
-createTs :: MonadIO m => UserId -> CarId -> Begin -> End -> m (Key Reservation)
-createTs userid carid begin end = do
-  now <- liftIO getCurrentTime'
-  create $ Reservation userid carid begin end now now
+activeReservationsWithUser :: MonadIO m => CarId -> m [(Entity Reservation, Entity User)]
+activeReservationsWithUser carid = do
+  now <- getCurrentTime'
+  reservations <- runDB $ selectList [ReservationEnd >=. now, ReservationCarId ==. carid] []
+  forM reservations $ \reservation -> do
+    let userid = reservationUserId . entityVal $ reservation
+    Just user <- User.find userid
+    return (reservation, Entity userid user)

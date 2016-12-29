@@ -4,7 +4,8 @@ module View (
   module View,
   module View.Car,
   module View.Occupation,
-  module View.Gas
+  module View.Gas,
+  module View.Reservation
 )where
 
 import Lucid
@@ -13,11 +14,12 @@ import Database.Persist
 import Data.Maybe
 
 import Route.Url
+import View.Type
 import View.Widget
 import View.Car
 import View.Occupation
 import View.Gas
-import View.Type
+import View.Reservation
 
 import Utils
 

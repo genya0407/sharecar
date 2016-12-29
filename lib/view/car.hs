@@ -28,6 +28,6 @@ carDetail_ me (carEntity@(Entity carid car), isOccupied) = layout (Just me) $ do
   carViewWithOccupied_ carEntity isOccupied
   ul_ $ do
     li_ $ a_ [href_ (carOccupyNewUrl carid)] "使用"
-    li_ "予約"
+    li_ $ a_ [href_ (carReservationsUrl carid)]"予約"
     li_ $ a_ [href_ (gasNewUrl carid)] "ガス代"
     li_ "使用履歴"

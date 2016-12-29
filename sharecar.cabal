@@ -59,11 +59,13 @@ library
                      , View.Car
                      , View.Occupation
                      , View.Gas
+                     , View.Reservation
                      , View.Widget
                      , View.Type
                      , Route.Login
                      , Route.Occupation
                      , Route.Gas
+                     , Route.Reservation
                      , Route.Url
                      , Utils
                      , Form

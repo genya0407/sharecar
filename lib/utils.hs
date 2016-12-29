@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleContexts #-}
+
 module Utils (
   module Utils,
   module Data.Time.Clock,
@@ -8,23 +10,29 @@ module Utils (
   module Control.Monad.Trans,
   module Model.Type,
   toSqlKey, fromSqlKey,
-  Entity(..)
+  Entity(..), (<>)
 ) where
 
 import Data.Time.Clock
 import Data.Time.Calendar
 import Data.Time.Format
 import Data.IORef
+import Data.Monoid ((<>))
+import Data.Text
 import Control.Monad.Trans
 import Control.Monad
 import Control.Monad.IO.Class
 import Database.Persist.Sql
+import Database.Persist.Class (ToBackendKey)
 
 import Model.Type
 import Database.Persist (Entity(..))
 
 type SessionVal = Maybe SessionId
 data MyAppState = DummyAppState (IORef Int)
+
+showId :: ToBackendKey SqlBackend record => Key record -> Text
+showId = pack . show . fromSqlKey
 
 getCurrentTime' :: MonadIO m => m UTCTime
 getCurrentTime' = do

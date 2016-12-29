@@ -6,13 +6,16 @@ import Data.Text
 import Utils
 
 carDetailUrl :: CarId -> Text
-carDetailUrl carid = "/car/" <> (pack . show . fromSqlKey $ carid)
+carDetailUrl carid = "/car/" <> showId carid
 
 carOccupyNewUrl :: CarId -> Text
 carOccupyNewUrl carid = (carDetailUrl carid) <> "/occupy/new"
 
 occupationEditUrl :: OccupationId -> Text
-occupationEditUrl occupid = "/occupation/" <> ( pack . show . fromSqlKey $ occupid) <> "/edit"
+occupationEditUrl occupid = "/occupation/" <> showId occupid <> "/edit"
+
+carReservationsUrl :: CarId -> Text
+carReservationsUrl carid = "/car/" <> showId carid <> "reservation"
 
 gasNewUrl :: CarId -> Text
-gasNewUrl carid = "/car/" <> (pack . show . fromSqlKey $ carid) <> "/gas/new"
+gasNewUrl carid = "/car/" <> showId carid <> "/gas/new"
