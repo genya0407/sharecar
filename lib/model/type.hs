@@ -41,10 +41,14 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
     name Text
     cryptPassword ByteString
     phoneNumber Text
+    updated UTCTime
+    created UTCTime
     UniqueMail mail
     deriving Show Generic
   Car
     name Text
+    updated UTCTime
+    created UTCTime
     deriving Show Generic
   Reservation
     userId UserId
@@ -65,8 +69,9 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
     created UTCTime
     deriving Show Generic
   Session
-    validUntil UTCTime
     userId UserId
+    updated UTCTime
+    created UTCTime
     deriving Show Generic
 |]
 

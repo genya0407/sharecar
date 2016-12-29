@@ -1,4 +1,5 @@
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE OverloadedStrings #-}
 module Model.Car where
 
 import           Prelude hiding (all)
@@ -13,6 +14,8 @@ import           Template
 
 mkBoilerplate "Car"
 
+new = Car "" defaultUTCTime defaultUTCTime
+
 allWithOccupied :: MonadIO m => m [(Entity Car, Bool)]
 allWithOccupied = do
   cars <- all
@@ -26,13 +29,3 @@ withOccupied carid = do
   Just car <- runDB $ get carid
   isOccupied <- Occup.isOccupied carid
   return $ Just (Entity carid car, isOccupied)
-
-{-
-notMeterEndBy :: MonadIO m => UserId -> m [(Entity Car, Bool)]
-notMeterEndBy userid = do
-  occupsNotMeterEndByMe <- Occup.notMeterEndBy userid
-  now <- liftIO getCurrentTime'
-  forM occupsNotMeterEndByMe $ \(Entity occupid occup) -> do
-    Just car <- runDB $ selectFirst [CarId ==. (occupationCarId occup)] []
-    return (car, (occupationEnd occup) > now)
--}

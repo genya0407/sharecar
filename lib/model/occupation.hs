@@ -5,15 +5,13 @@ import           Model.Type
 import           Database.Persist as P
 import           Control.Monad.IO.Class
 import           Data.Time.Clock
+import           Data.Maybe
 import           Utils
 import           Template
 
 mkBoilerplate "Occupation"
 
-new :: MonadIO m => UserId -> CarId -> UTCTime -> UTCTime -> Int -> Maybe Int -> m Occupation
-new userid carid begin end meterBegin mMeterEnd = do
-  now <- liftIO getCurrentTime'
-  return $ Occupation userid carid begin end meterBegin mMeterEnd now now
+new = Occupation (toSqlKey 0) (toSqlKey 0) defaultUTCTime defaultUTCTime 0 Nothing defaultUTCTime defaultUTCTime
 
 replace :: MonadIO m => OccupationId -> Occupation -> m ()
 replace occupid occup = runDB $ P.replace occupid occup
@@ -28,8 +26,5 @@ lastByMeter carid = runDB $ selectFirst [OccupationCarId ==. carid] [Desc Occupa
 
 isOccupied :: MonadIO m => CarId -> m Bool
 isOccupied carid = do
-  now <-  liftIO getCurrentTime'
-  mOccupation <- runDB $ selectFirst [OccupationCarId ==. carid, OccupationEnd >. now] []
-  case mOccupation of
-    Just _ -> return True
-    Nothing -> return False
+  mOccupation <- runDB $ selectFirst [OccupationCarId ==. carid, OccupationMeterEnd ==. Nothing] []
+  return $ isJust mOccupation

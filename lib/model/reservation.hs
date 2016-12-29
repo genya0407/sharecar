@@ -11,6 +11,8 @@ import           Template
 
 mkBoilerplate "Reservation"
 
+new = Reservation (toSqlKey 0) (toSqlKey 0) defaultUTCTime defaultUTCTime defaultUTCTime defaultUTCTime
+
 active :: MonadIO m => m [Entity Reservation]
 active = do
   now <- liftIO $ getCurrentTime'

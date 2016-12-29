@@ -6,19 +6,23 @@ import Language.Haskell.TH
 import Language.Haskell.TH.Syntax
 import Model.Type
 import Data.Char
+import Data.Time.Clock
 import Database.Persist
 import Control.Monad.IO.Class
 import Control.Monad
+import Utils
+
+{-
+ - create :: User -> m (Key User) -- updatedとcreatedを更新する
+ - all :: m [User]
+ - find :: Key User -> m (Maybe User)
+ - update :: Key User -> User -> m User -- updatedを更新する
+-}
 
 monadIO m = forallT [PlainTV m] $ sequenceQ [appT (conT ''Control.Monad.IO.Class.MonadIO) (varT m)]
-
 runDBTemplate = infixE (Just (varE 'runDB)) (varE (mkName "$")) 
 
-mkBoilerplate name = do
-  fetchAll <- mkFetchAll name
-  find <- mkFind name
-  create <- mkCreate name
-  return . concat $ [fetchAll, find, create]
+mkBoilerplate name = concat <$> mapM (\mk -> mk name) [mkFetchAll, mkFind, mkCreate, mkUpdate]
 
 mkFetchAll name = do
   fetchall <- newName "all"
@@ -41,13 +45,27 @@ mkFind name = do
 
 mkCreate name = do
   create <- newName "create"
-  m <- newName "m"
   target <- newName "target"
+  now <- newName "now"
+  m <- newName "m"
   let
     targetType = conT $ mkName name
     targetIdType = appT (conT ''Key) targetType
-  fd <- funD create [clause [varP target] (normalB $ runDBTemplate (Just (appE (varE 'insert) (varE target)))) []]
+    upd = mkName $ (map toLower name) ++ "Updated"
+    crd = mkName $ (map toLower name) ++ "Created"
+  fd <- funD create [clause [varP target] (normalB (infixE (Just (varE 'getCurrentTime')) (varE $ mkName ">>=") (Just (lamE [varP now] (appE (varE 'runDB) (infixE (Just (varE 'insert)) (varE (mkName "$")) (Just (recUpdE (varE target) [return (upd,VarE now), return (crd, VarE now)])))))))) []]
   td <- sigD create ((monadIO m) (appT (appT arrowT targetType) (appT (varT m) targetIdType)))
   return [fd, td]
 
-
+mkUpdate name = do
+  update <- newName "update"
+  target <- newName "target"
+  now <- newName "now"
+  m <- newName "m"
+  let
+    upd = mkName $ (map toLower name) ++ "Updated"
+    targetType = conT $ mkName name
+    targetTypeId = conT . mkName $ name ++ "Id"
+  fd <- funD update [clause [varP target] (normalB (infixE (Just (varE 'getCurrentTime')) (varE $ mkName ">>=") (Just (lamE [varP now] (appE (varE 'runDB) (infixE (Just (varE 'insert)) (varE $ mkName "$") (Just (recUpdE (varE target) [return (upd,VarE now)])))))))) []]
+  td <- sigD update ((monadIO m) (appT (appT arrowT targetType) (appT (varT m) targetTypeId)))
+  return [fd, td]

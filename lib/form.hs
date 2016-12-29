@@ -14,18 +14,15 @@ formOccupationBegin userid carid = do
   mBeginTime <- param "begin-time"
   mEndDate <- param "end-date"
   mEndTime <- param "end-time"
-  let
-    mBegin = parseTimeM True defaultTimeLocale "%F/%R" =<< ((\d t -> d ++ "/" ++ t) <$> mBeginDate <*> mBeginTime)
-    mEnd = parseTimeM True defaultTimeLocale "%F/%R" =<< ((\d t -> d ++ "/" ++ t) <$> mEndDate <*> mEndTime)
   mMeterBegin <- param "meter-begin"
-  let mOccupIO = Occup.new <$> Just userid
-                           <*> Just carid
-                           <*> mBegin
-                           <*> mEnd
-                           <*> mMeterBegin
-                           <*> Just Nothing -- mMeterEndはnewのときは必ずNothing
-  case mOccupIO of
-    Just occupIO -> do
-      occup <- occupIO
-      return $ Just occup
-    Nothing -> return Nothing
+  return $ do
+    begin <- parseTimeM True defaultTimeLocale "%F/%R" =<< ((\d t -> d ++ "/" ++ t) <$> mBeginDate <*> mBeginTime)
+    end <- parseTimeM True defaultTimeLocale "%F/%R" =<< ((\d t -> d ++ "/" ++ t) <$> mEndDate <*> mEndTime)
+    meterBegin <- mMeterBegin
+    return $ Occup.new
+      { occupationUserId = userid
+      , occupationCarId = carid
+      , occupationBegin = begin
+      , occupationEnd = end
+      , occupationMeterBegin = meterBegin
+      }

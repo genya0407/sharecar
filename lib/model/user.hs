@@ -6,14 +6,17 @@ import           Model.Type
 import           Database.Persist
 import           Control.Monad.IO.Class
 import           Data.Either
-import           Data.Text
+import           Data.Text hiding (find)
 import           Data.Text.Encoding (encodeUtf8)
-import           Data.ByteString
+import           Data.ByteString hiding (find)
 import qualified Model.Session as Session
 import           Crypto.Hash.SHA1 (hash)
 import           Template
+import           Utils
 
 mkBoilerplate "User"
+
+new = User "" "" "" "" defaultUTCTime defaultUTCTime
 
 type Name = Text
 type Email = Text
@@ -24,18 +27,18 @@ createCrypt :: MonadIO m => Email -> Name -> PhoneNumber -> Password -> m (Key U
 createCrypt email name phoneNumber password = do
   let
     cryptPassword = hash password
-    user = User
+    user = new
       { userMail = email
       , userName = name
-      , userPhoneNumber = phoneNumber
       , userCryptPassword = cryptPassword
+      , userPhoneNumber = phoneNumber
       }
   create $ user
 
 getBySid :: MonadIO m => SessionId -> m (Maybe (Entity User))
 getBySid sid = do
-  Just (Entity _ session) <- Session.find sid
-  Just user <- runDB $ get (sessionUserId session)
+  Just session <- Session.find sid
+  Just user <- find (sessionUserId session)
   return . Just $ Entity (sessionUserId session) user
 
 login :: MonadIO m => Text -> Text -> m (Maybe SessionId)
@@ -44,7 +47,7 @@ login email password = do
       case mUser of
         [Entity userid user] -> do
           if userCryptPassword user == (hash . encodeUtf8) password then do
-            sid <- Session.create userid
+            sid <- Session.create $ Session.new { sessionUserId = userid }
             return $ Just sid
           else
             return Nothing

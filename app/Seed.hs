@@ -16,10 +16,10 @@ main = do
   user2 <- User.createCrypt "example2@example.com" "Yamada Jiro" "0123456789" "password2"
   user3 <- User.createCrypt "example3@example.com" "Yamada Saburo" "0123456789" "password3"
 
-  car1 <- Car.create $ Car "ミラ"
-  car2 <- Car.create $ Car "ステップワゴン"
-  car3 <- Car.create $ Car "ライフ"
-  car4 <- Car.create $ Car "オデッセイ"
+  car1 <- Car.create $ Car.new { carName = "ミラ" }
+  car2 <- Car.create $ Car.new { carName = "ステップワゴン" }
+  car3 <- Car.create $ Car.new { carName = "ライフ" }
+  car4 <- Car.create $ Car.new { carName = "オデッセイ" }
 
   now <- getCurrentTime'
   forM_ [(user1, car2), (user3 ,car4), (user2, car1)] $ \(user, car) -> do
