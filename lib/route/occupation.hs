@@ -26,7 +26,7 @@ occupationRoute = do
       Just carWithOccupied@(Entity carid car, isOccupied) -> do
         now <- liftIO getCurrentTime'
         mLastOccup <- Occup.lastByMeter carid
-        html $ V.carOccupyNew_ me carWithOccupied (Just now) (occupationMeterEnd =<< (\(Entity occupid occup) -> Just occup) =<< mLastOccup)
+        html $ V.occupyNew_ me carWithOccupied (Just now) (occupationMeterEnd =<< (\(Entity occupid occup) -> Just occup) =<< mLastOccup)
       Nothing -> redirect "/car"
   post ("car" <//> var <//> "occupy/new") $ \_carid -> do
     let carid = toSqlKey _carid
@@ -47,7 +47,7 @@ occupationRoute = do
         if occupationUserId occup == meid then do
           mWithOccupied <- Car.withOccupied $ occupationCarId occup
           case mWithOccupied of
-            Just withOccupied -> html $ V.occupationEdit meEntity withOccupied (Entity occupid occup)
+            Just withOccupied -> html $ V.occupationEdit_ meEntity withOccupied (Entity occupid occup)
             Nothing -> redirect "/car"
         else
           redirect "/car"

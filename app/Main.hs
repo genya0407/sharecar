@@ -80,7 +80,7 @@ app ah = do
         occupsAndCarsNotMeterEndByMe <- forM occupsNotMeterEndByMe $ \occupEntity@(Entity occupid occup) -> do
           Just car <- Car.find $ occupationCarId occup
           return (occupEntity, Entity (occupationCarId occup) car)
-        html $ V.carIndex_ me carsWithOccupied occupsAndCarsNotMeterEndByMe
+        html $ V.index_ me carsWithOccupied occupsAndCarsNotMeterEndByMe
       get ("car" <//> var) $ \_carid -> do
         let carid = toSqlKey _carid
         me <- liftM findFirst getContext

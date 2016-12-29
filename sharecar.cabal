@@ -48,7 +48,23 @@ executable seed
 
 library
   hs-source-dirs:      lib
-  exposed-modules:     Model.Type, Model.User, Model.Session, Model.Car, Model.Reservation, Model.Occupation, View, Route.Login, Route.Occupation, Utils, Form, Template
+  exposed-modules:     Model.Type
+                     , Model.User
+                     , Model.Session
+                     , Model.Car
+                     , Model.Reservation
+                     , Model.Occupation
+                     , View
+                     , View.Car
+                     , View.Occupation
+                     , View.Widget
+                     , View.Type
+                     , Route.Login
+                     , Route.Occupation
+                     , Route.Url
+                     , Utils
+                     , Form
+                     , Template
   build-depends:       base >= 4.7 && < 5
                      , resourcet >= 1.1
                      , monad-logger >= 0.3
@@ -74,3 +90,4 @@ library
                      , hvect
                      , mtl
   default-language:    Haskell2010
+  default-extensions: OverloadedStrings
