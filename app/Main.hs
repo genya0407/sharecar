@@ -2,11 +2,13 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+
 module Main where
 
 import Web.Spock hiding (SessionId)
 import Web.Spock.Config
 
+import System.Environment (getArgs)
 import Control.Monad.Trans
 import Control.Monad
 import Data.Monoid
@@ -34,14 +36,19 @@ import Utils
 
 type SessionVal = Maybe SessionId
 data MyAppState = DummyAppState (IORef Int)
+type AuthHook = ActionCtxT (HVect '[]) (WebStateM () (Maybe SessionId) MyAppState) (HVect ((Entity User) ': '[]))
 
 main :: IO ()
 main =
     do ref <- newIORef 0
        spockCfg <- defaultSpockCfg Nothing PCNoDatabase (DummyAppState ref)
-       runSpock 8080 (spock spockCfg app)
+       args <- getArgs
+       let ah = case args of
+                  ["devel"] -> develHook
+                  _ -> authHook
+       runSpock 8080 (spock spockCfg (app ah))
 
---authHook :: ActionCtxT (HVect xs) m (HVect ((Entity User) ': xs))
+authHook :: AuthHook
 authHook = do
   oldCtx <- getContext
   mSid <- readSession
@@ -53,20 +60,19 @@ authHook = do
         Just user -> return (user :&: oldCtx)
     _ -> redirect "/login"
 
-{-
+develHook :: AuthHook
 develHook = do
   oldCtx <- getContext
   users <- User.all
   let user = (users Prelude.!! 0)
   return (user :&: oldCtx)
--}
 
-app :: SpockCtxM () () SessionVal MyAppState ()
-app = do
+app :: AuthHook -> SpockCtxM () () SessionVal MyAppState ()
+app ah = do
   prehook (return HNil) $ do
     get "/" $ redirect "/car"
     RL.loginRoute "/car"
-    prehook authHook $ do -- Caution !!!
+    prehook ah $ do
       get "car" $ do
         me@(Entity meid _) <- liftM findFirst getContext
         carsWithOccupied <- Car.allWithOccupied
