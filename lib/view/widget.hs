@@ -37,7 +37,6 @@ layout mMe content = toStrict . renderText $ do
           Nothing -> ""
       content
 
-
 carViewWithOccupied_ :: Entity Car -> Bool -> Html ()
 carViewWithOccupied_ (Entity carid car) isOccupied = do
   div_ $ do

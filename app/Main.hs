@@ -24,6 +24,7 @@ import qualified View as V
 import qualified Form as F
 import qualified Route.Login as RL
 import qualified Route.Occupation as RO
+import qualified Route.Gas as RG
 
 import           Utils
 
@@ -65,6 +66,7 @@ app ah = do
     RL.loginRoute "/car"
     prehook ah $ do
       RO.occupationRoute
+      RG.gasRoute
       get "car" $ do
         me@(Entity meid _) <- liftM findFirst getContext
         carsWithOccupied <- Car.allWithOccupied

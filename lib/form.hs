@@ -4,6 +4,7 @@ module Form where
 
 import           Web.Spock
 import qualified Model.Occupation as Occup
+import qualified Model.Gas as Gas
 import           Utils
 
 formOccupationBegin :: MonadIO m => UserId -> CarId -> ActionCtxT ctx m (Maybe Occupation)
@@ -24,3 +25,13 @@ formOccupationBegin userid carid = do
       , occupationEnd = end
       , occupationMeterBegin = meterBegin
       }
+
+formGas :: MonadIO m => UserId -> CarId -> ActionCtxT ctx m (Maybe Gas)
+formGas userid carid = do
+  mAmount <- param "amount"
+  return $ do
+    amount <- mAmount
+    return $ Gas.new
+      { gasUserId = userid
+      , gasCarId = carid
+      , gasAmount = amount }

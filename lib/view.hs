@@ -3,7 +3,8 @@
 module View (
   module View,
   module View.Car,
-  module View.Occupation
+  module View.Occupation,
+  module View.Gas
 )where
 
 import Lucid
@@ -15,6 +16,7 @@ import Route.Url
 import View.Widget
 import View.Car
 import View.Occupation
+import View.Gas
 import View.Type
 
 import Utils

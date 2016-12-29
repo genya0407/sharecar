@@ -54,13 +54,16 @@ library
                      , Model.Car
                      , Model.Reservation
                      , Model.Occupation
+                     , Model.Gas
                      , View
                      , View.Car
                      , View.Occupation
+                     , View.Gas
                      , View.Widget
                      , View.Type
                      , Route.Login
                      , Route.Occupation
+                     , Route.Gas
                      , Route.Url
                      , Utils
                      , Form

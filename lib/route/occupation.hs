@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, ScopedTypeVariables, TypeOperators #-}
+{-# LANGUAGE ScopedTypeVariables, TypeOperators #-}
 {-# LANGUAGE DataKinds #-}
 
 module Route.Occupation where

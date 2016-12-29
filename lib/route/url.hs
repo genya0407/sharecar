@@ -14,3 +14,5 @@ carOccupyNewUrl carid = (carDetailUrl carid) <> "/occupy/new"
 occupationEditUrl :: OccupationId -> Text
 occupationEditUrl occupid = "/occupation/" <> ( pack . show . fromSqlKey $ occupid) <> "/edit"
 
+gasNewUrl :: CarId -> Text
+gasNewUrl carid = "/car/" <> (pack . show . fromSqlKey $ carid) <> "/gas/new"

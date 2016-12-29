@@ -73,6 +73,13 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
     updated UTCTime
     created UTCTime
     deriving Show Generic
+  Gas
+    userId UserId
+    carId CarId
+    amount Int
+    updated UTCTime
+    created UTCTime
+    deriving Show Generic
 |]
 
 build :: Monad m => Builder -> HtmlT m ()

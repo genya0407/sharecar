@@ -1,4 +1,3 @@
-
 module View.Car where
 
 import Data.Text
@@ -30,5 +29,5 @@ carDetail_ me (carEntity@(Entity carid car), isOccupied) = layout (Just me) $ do
   ul_ $ do
     li_ $ a_ [href_ (carOccupyNewUrl carid)] "使用"
     li_ "予約"
-    li_ "ガス代"
+    li_ $ a_ [href_ (gasNewUrl carid)] "ガス代"
     li_ "使用履歴"
