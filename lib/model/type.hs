@@ -57,7 +57,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
     end UTCTime
     updated UTCTime
     created UTCTime
-    deriving Show Generic
+    deriving Show Generic Eq
   Occupation
     userId UserId
     carId CarId
@@ -96,6 +96,9 @@ instance ToHtml UTCTime where
 instance ToHtml Day where
   toHtml    = build . Blaze.fromString . (formatTime defaultTimeLocale "%Y年%m月%d日")
   toHtmlRaw = toHtml
+
+instance Ord Reservation where
+  res1 `compare` res2 = (reservationBegin res1) `compare` (reservationBegin res2)
 
 _runDB :: (MonadBaseControl IO m, MonadIO m) => ReaderT SqlBackend (NoLoggingT (ResourceT m)) a -> m a
 _runDB query = runSqlite "db/db.sqlite3" query

@@ -14,8 +14,11 @@ carOccupyNewUrl carid = (carDetailUrl carid) <> "/occupy/new"
 occupationEditUrl :: OccupationId -> Text
 occupationEditUrl occupid = "/occupation/" <> showId occupid <> "/edit"
 
-carReservationsUrl :: CarId -> Text
-carReservationsUrl carid = "/car/" <> showId carid <> "reservation"
+reservationsUrl :: CarId -> Text
+reservationsUrl carid = "/car/" <> showId carid <> "/reservation"
+
+newReservationUrl :: CarId -> Text
+newReservationUrl carid = "/car/" <> showId carid <> "/reservation/new"
 
 gasNewUrl :: CarId -> Text
 gasNewUrl carid = "/car/" <> showId carid <> "/gas/new"

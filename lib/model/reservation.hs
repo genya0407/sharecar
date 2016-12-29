@@ -2,6 +2,7 @@
 module Model.Reservation where
 
 import           Database.Persist
+import           Data.List (sort)
 
 import qualified Model.User as User
 
@@ -24,7 +25,8 @@ activeReservationsWithUser :: MonadIO m => CarId -> m [(Entity Reservation, Enti
 activeReservationsWithUser carid = do
   now <- getCurrentTime'
   reservations <- runDB $ selectList [ReservationEnd >=. now, ReservationCarId ==. carid] []
-  forM reservations $ \reservation -> do
+  let sortedReservations = reverse . sort $ reservations
+  forM sortedReservations $ \reservation -> do
     let userid = reservationUserId . entityVal $ reservation
     Just user <- User.find userid
     return (reservation, Entity userid user)
