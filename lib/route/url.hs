@@ -20,5 +20,8 @@ reservationsUrl carid = "/car/" <> showId carid <> "/reservation"
 newReservationUrl :: CarId -> Text
 newReservationUrl carid = "/car/" <> showId carid <> "/reservation/new"
 
+editReservationUrl :: ReservationId -> Text
+editReservationUrl resid = "/reservation/" <> showId resid <> "/edit"
+
 gasNewUrl :: CarId -> Text
 gasNewUrl carid = "/car/" <> showId carid <> "/gas/new"

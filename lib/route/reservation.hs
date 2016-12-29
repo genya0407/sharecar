@@ -36,3 +36,30 @@ reservationRoute = do
         Reservation.create res
         redirect $ reservationsUrl carid
       Nothing -> redirect $ newReservationUrl carid
+  get ("/reservation" <//> var <//> "edit") $ \_resid -> do
+    let resid = toSqlKey _resid
+    (me :: Entity User) <- liftM findFirst getContext
+    mRes <- Reservation.find resid
+    case mRes of
+      Just res -> do
+        if reservationUserId res == entityKey me then
+          html $ V.editReservation_ me (Entity resid res)
+        else
+          redirect $ reservationsUrl (reservationCarId res)
+      Nothing -> redirect "/car"
+  post ("/reservation" <//> var <//> "edit") $ \_resid -> do
+    let resid = toSqlKey _resid
+    (me :: Entity User) <- liftM findFirst getContext
+    mCarid <- Reservation.getCarId resid
+    case mCarid of
+      Just carid -> do
+        mRes <- F.formReservation (entityKey me) carid
+        case mRes of
+          Just res -> do
+            if reservationUserId res == entityKey me then do
+              Reservation.update resid res
+              redirect $ reservationsUrl (reservationCarId res)
+            else
+              redirect "/car"
+          Nothing -> redirect "/car"
+      Nothing -> redirect "/car"

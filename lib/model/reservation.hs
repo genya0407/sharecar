@@ -30,3 +30,10 @@ activeReservationsWithUser carid = do
     let userid = reservationUserId . entityVal $ reservation
     Just user <- User.find userid
     return (reservation, Entity userid user)
+
+getCarId :: MonadIO m => ReservationId -> m (Maybe CarId)
+getCarId resid = do
+  mRes <- find resid
+  return $ do
+    res <- mRes
+    Just $ reservationCarId res
