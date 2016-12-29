@@ -3,14 +3,13 @@
 module Model.Car where
 
 import           Prelude hiding (all)
-import           Model.Type
-import qualified Model.Occupation as Occup
 import           Database.Persist
-import           Control.Monad
-import           Control.Monad.IO.Class
 import           Data.Text hiding (all)
-import           Utils
+
+import qualified Model.Occupation as Occup
 import           Template
+
+import           Utils
 
 mkBoilerplate "Car"
 

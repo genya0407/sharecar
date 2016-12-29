@@ -2,16 +2,16 @@
 {-# LANGUAGE TemplateHaskell #-}
 module Model.User where
 
-import           Model.Type
 import           Database.Persist
-import           Control.Monad.IO.Class
 import           Data.Either
 import           Data.Text hiding (find)
 import           Data.Text.Encoding (encodeUtf8)
 import           Data.ByteString hiding (find)
 import qualified Model.Session as Session
 import           Crypto.Hash.SHA1 (hash)
+
 import           Template
+
 import           Utils
 
 mkBoilerplate "User"

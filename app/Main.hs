@@ -5,19 +5,16 @@
 
 module Main where
 
-import Web.Spock hiding (SessionId)
-import Web.Spock.Config
+import           Web.Spock hiding (SessionId)
+import           Web.Spock.Config
 
-import System.Environment (getArgs)
-import Control.Monad.Trans
-import Control.Monad
-import Data.Monoid
-import Data.IORef
-import Data.Time.Clock
-import Data.Time.Format
+import           System.Environment (getArgs)
+import           Data.Monoid
+import           Data.IORef
+import           Data.List (intersperse)
+import           Data.HVect
 import qualified Data.Text as T
 
-import           Model.Type
 import qualified Model.User as User
 import qualified Model.Session as Session
 import qualified Model.Reservation as Reserv
@@ -25,15 +22,10 @@ import qualified Model.Occupation as Occup
 import qualified Model.Car as Car
 import qualified View as V
 import qualified Form as F
-import           Database.Persist (Entity(..))
-import           Database.Persist.Sql (toSqlKey)
-import           Data.List (intersperse)
-
-import           Data.HVect
-
 import qualified Route.Login as RL
 import qualified Route.Occupation as RO
-import Utils
+
+import           Utils
 
 type AuthHook = ActionCtxT (HVect '[]) (WebStateM () (Maybe SessionId) MyAppState) (HVect ((Entity User) ': '[]))
 

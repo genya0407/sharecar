@@ -2,10 +2,6 @@
 
 module Model.Session where
 
-import           Model.Type
-import           Database.Persist
-import           Control.Monad.IO.Class
-import           Data.Time.Clock
 import           Utils
 import           Template
 

@@ -1,10 +1,9 @@
 module Route.Url where
 
 import Data.Monoid ((<>))
-import Database.Persist.Sql (fromSqlKey)
-
 import Data.Text
-import Model.Type
+
+import Utils
 
 carDetailUrl :: CarId -> Text
 carDetailUrl carid = "/car/" <> (pack . show . fromSqlKey $ carid)

@@ -1,15 +1,13 @@
 module View.Widget where
 
-import Data.Time.Clock
-import Data.Time.Format
 import Data.Maybe
 import Data.Text
 import Data.Text.Lazy (toStrict)
 import Lucid
-import Database.Persist (Entity(..))
 
 import View.Type
-import Model.Type
+
+import Utils
 
 inputBeginEnd_ :: Maybe UTCTime -> Maybe UTCTime -> Html ()
 inputBeginEnd_ mBegin mEnd = do

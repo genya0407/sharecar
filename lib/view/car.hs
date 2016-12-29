@@ -1,16 +1,14 @@
 
 module View.Car where
 
-import Database.Persist (Entity(..))
 import Data.Text
-import Data.Time.Clock
 import Lucid
-import Control.Monad
 
 import View.Type
 import View.Widget
-import Model.Type
 import Route.Url
+
+import Utils
 
 carIndex_ :: Me -> [(Entity Car, Bool)] -> [(Entity Occupation, Entity Car)] -> Text
 carIndex_ me carsWithOccupied occupsAndCarsNotMeterEndByMe = layout (Just me) $ do

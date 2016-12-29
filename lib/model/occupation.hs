@@ -1,13 +1,12 @@
 {-# LANGUAGE TemplateHaskell #-}
 module Model.Occupation where
 
-import           Model.Type
 import           Database.Persist as P
-import           Control.Monad.IO.Class
-import           Data.Time.Clock
 import           Data.Maybe
-import           Utils
+
 import           Template
+
+import           Utils
 
 mkBoilerplate "Occupation"
 

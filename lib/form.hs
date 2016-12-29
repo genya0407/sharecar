@@ -3,10 +3,8 @@
 module Form where
 
 import           Web.Spock
-import           Model.Type
 import qualified Model.Occupation as Occup
-import           Control.Monad.IO.Class
-import           Data.Time.Format
+import           Utils
 
 formOccupationBegin :: MonadIO m => UserId -> CarId -> ActionCtxT ctx m (Maybe Occupation)
 formOccupationBegin userid carid = do

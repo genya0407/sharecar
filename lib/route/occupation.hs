@@ -4,17 +4,16 @@
 module Route.Occupation where
 
 import           Web.Spock
-import qualified View as V
 import           Database.Persist hiding (get)
 import qualified Data.Text as T
-import           Model.Type
+import           Data.HVect
+
+import qualified View as V
 import qualified Model.Occupation as Occup
 import qualified Model.Car as Car
 import qualified Form as F
-import           Data.HVect
+
 import           Utils
-import           Control.Monad.Trans
-import           Control.Monad
 
 occupationRoute :: SpockCtxM (HVect (Entity User ': '[])) () SessionVal MyAppState ()
 occupationRoute = do

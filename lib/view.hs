@@ -8,12 +8,7 @@ module View (
 
 import Lucid
 import Data.Text
-import Model.Type
 import Database.Persist
-import Database.Persist.Sql (fromSqlKey, toSqlKey)
-import Control.Monad
-import Data.Time.Clock
-import Data.Time.Format
 import Data.Maybe
 
 import Route.Url
@@ -21,6 +16,8 @@ import View.Widget
 import View.Car
 import View.Occupation
 import View.Type
+
+import Utils
 
 index_ = carIndex_
 

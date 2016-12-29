@@ -4,15 +4,14 @@ module View.Occupation (
 ) where
 
 import Data.Text
-import Data.Time.Clock
 import Data.Maybe
-import Model.Type
+import Lucid
+
 import View.Type
 import View.Widget
 import Route.Url
+
 import Utils
-import Lucid
-import Database.Persist (Entity(..))
 
 occupationEdit_ :: Me -> (Entity Car, Bool) -> Entity Occupation -> Text
 occupationEdit_ me (carEntity@(Entity carid car), isOccupied) (Entity occupid occup) = layout (Just me) $ do

@@ -1,13 +1,9 @@
 {-# LANGUAGE TemplateHaskell #-}
 module Model.Reservation where
 
-import           Model.Type
 import           Database.Persist
-import           Control.Monad.IO.Class
-import           Data.Time.Clock
-import           Utils
-import           Language.Haskell.TH
 import           Template
+import           Utils
 
 mkBoilerplate "Reservation"
 

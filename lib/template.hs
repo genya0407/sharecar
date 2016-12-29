@@ -4,12 +4,8 @@ module Template where
 
 import Language.Haskell.TH
 import Language.Haskell.TH.Syntax
-import Model.Type
 import Data.Char
-import Data.Time.Clock
 import Database.Persist
-import Control.Monad.IO.Class
-import Control.Monad
 import Utils
 
 {-
@@ -19,7 +15,7 @@ import Utils
  - update :: Key User -> User -> m User -- updatedを更新する
 -}
 
-monadIO m = forallT [PlainTV m] $ sequenceQ [appT (conT ''Control.Monad.IO.Class.MonadIO) (varT m)]
+monadIO m = forallT [PlainTV m] $ sequenceQ [appT (conT ''MonadIO) (varT m)]
 runDBTemplate = infixE (Just (varE 'runDB)) (varE (mkName "$")) 
 
 mkBoilerplate name = concat <$> mapM (\mk -> mk name) [mkFetchAll, mkFind, mkCreate, mkUpdate]

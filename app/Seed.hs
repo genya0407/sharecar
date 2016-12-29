@@ -1,14 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-import           Model.Type
+import           System.Random (randomRIO)
+
 import qualified Model.User as User
 import qualified Model.Car as Car
 import qualified Model.Reservation as Reserv
 import qualified Model.Occupation as Occup
 
-import           Data.Time.Clock
-import           System.Random (randomRIO)
-import           Control.Monad
 import           Utils
 
 main = do
