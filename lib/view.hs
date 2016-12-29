@@ -48,11 +48,14 @@ occupationEdit me (carEntity@(Entity carid car), isOccupied) (Entity occupid occ
     input_ [type_ "number", name_ "meter-end"]
     input_ [type_ "submit", value_ "送信"]
 
-carIndex_ :: Me -> [(Entity Car, Bool)] -> [Entity Occupation] -> Text
-carIndex_ me carsWithOccupied occupsNotMeterEndByMe = layout (Just me) $ do
+carIndex_ :: Me -> [(Entity Car, Bool)] -> [(Entity Occupation, Entity Car)] -> Text
+carIndex_ me carsWithOccupied occupsAndCarsNotMeterEndByMe = layout (Just me) $ do
   ul_ $ do
-    forM_ occupsNotMeterEndByMe $ \occupsEntity@(Entity occupid occup) -> do
-      li_ $ a_ [href_ (occupationEditUrl occupid)] $ toHtml $ (utctDay . occupationBegin $ occup)
+    forM_ occupsAndCarsNotMeterEndByMe $ \(occupsEntity@(Entity occupid occup), carEntity@(Entity carid car)) -> do
+      li_ $ a_ [href_ (occupationEditUrl occupid)] $ do
+        toHtml $ carName car
+        ": "
+        toHtml $ (utctDay . occupationBegin $ occup)
   hr_ []
   ul_ $ do
     forM_ carsWithOccupied $ \(carEntity@(Entity carid car), isOccupied) -> do
