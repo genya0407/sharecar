@@ -36,7 +36,7 @@ type AuthHook = ActionCtxT (HVect '[]) (WebStateM () (Maybe SessionId) MyAppStat
 main :: IO ()
 main =
     do ref <- newIORef 0
-       port <- getEnv "SHARECARPORT"
+       port <- getEnv "SHARECAR_PORT"
        spockCfg <- defaultSpockCfg Nothing PCNoDatabase (DummyAppState ref)
        args <- getArgs
        let ah = case args of
