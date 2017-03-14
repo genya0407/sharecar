@@ -1,4 +1,6 @@
-module View.Car where
+module View.Car (
+  carIndex_, carDetail_
+)where
 
 import Data.Text
 import Lucid
@@ -11,17 +13,17 @@ import Utils
 
 carIndex_ :: Me -> [(Entity Car, Bool)] -> [(Entity Occupation, Entity Car)] -> Text
 carIndex_ me carsWithOccupied occupsAndCarsNotMeterEndByMe = layout (Just me) $ do
-  ul_ $ do
+  div_ [class_ "collection"] $ do
     forM_ occupsAndCarsNotMeterEndByMe $ \(occupsEntity@(Entity occupid occup), carEntity@(Entity carid car)) -> do
-      li_ $ a_ [href_ (occupationEditUrl occupid)] $ do
+      a_ [href_ (occupationEditUrl occupid), class_ "collection-item"] $ do
         toHtml $ carName car
         ": "
         toHtml $ (utctDay . occupationBegin $ occup)
   hr_ []
-  ul_ $ do
+  div_ [class_ "collection"] $ do
     forM_ carsWithOccupied $ \(carEntity@(Entity carid car), isOccupied) -> do
-      li_ $ do
-        a_ [href_ (carDetailUrl carid)] $ carViewWithOccupied_ carEntity isOccupied
+      a_ [href_ (carDetailUrl carid), class_ "collection-item"] $ do
+        carViewWithOccupied_ carEntity isOccupied
 
 carDetail_ :: Me -> (Entity Car, Bool) -> Text
 carDetail_ me (carEntity@(Entity carid car), isOccupied) = layout (Just me) $ do

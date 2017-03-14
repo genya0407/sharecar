@@ -14,6 +14,7 @@ import           Data.IORef
 import           Data.List (intersperse)
 import           Data.HVect
 import qualified Data.Text as T
+import           Network.Wai.Middleware.Static
 
 import qualified Model.User as User
 import qualified Model.Session as Session
@@ -66,6 +67,7 @@ app ah = do
     get "/" $ redirect "/car"
     RL.loginRoute "/car"
     prehook ah $ do
+      middleware (staticPolicy (addBase "static"))
       RO.occupationRoute
       RG.gasRoute
       RR.reservationRoute

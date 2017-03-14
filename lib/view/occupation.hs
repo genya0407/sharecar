@@ -29,7 +29,7 @@ occupyNew_ me (carEntity@(Entity carid car), isOccupied) mNow mMeterBegin = layo
     carViewWithOccupied_ carEntity isOccupied
     inputBeginEnd_ mNow mNow
     inputMeterBegin_ mMeterBegin
-    input_ [type_ "submit", value_ "使用開始"]
+    input_ [type_ "submit", class_ "btn waves-effect waves-light", value_ "使用開始"]
 
 inputMeterBegin_ :: Maybe Int -> Html ()
 inputMeterBegin_ mMeterBegin = do
