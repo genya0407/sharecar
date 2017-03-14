@@ -27,6 +27,7 @@ import qualified Route.Login as RL
 import qualified Route.Reservation as RR
 import qualified Route.Occupation as RO
 import qualified Route.Gas as RG
+import           System.Environment (getEnv)
 
 import           Utils
 
@@ -35,12 +36,13 @@ type AuthHook = ActionCtxT (HVect '[]) (WebStateM () (Maybe SessionId) MyAppStat
 main :: IO ()
 main =
     do ref <- newIORef 0
+       port <- getEnv "SHARECARPORT"
        spockCfg <- defaultSpockCfg Nothing PCNoDatabase (DummyAppState ref)
        args <- getArgs
        let ah = case args of
                   ["devel"] -> develHook
                   _ -> authHook
-       runSpock 8080 (spock spockCfg (app ah))
+       runSpock (read port) (spock spockCfg (app ah))
 
 authHook :: AuthHook
 authHook = do
